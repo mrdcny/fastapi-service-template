@@ -1,0 +1,6 @@
+{{ include "fastapi-service-template.fullname" . }} is deployed.
+
+Try it:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "fastapi-service-template.fullname" . }} 8000:{{ .Values.service.port }}
+  curl localhost:8000/readyz
+  open http://localhost:8000/docs

@@ -1,0 +1,74 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/OWNER/fastapi-service-template
+  # Defaults to the chart's appVersion. Prefer an immutable digest in production.
+  tag: ""
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+podAnnotations: {}
+
+config:
+  environment: production
+  logLevel: INFO
+  # Extra env vars, e.g. OTEL_EXPORTER_OTLP_ENDPOINT or OTEL_TRACES_SAMPLER.
+  extraEnv: []
+
+database:
+  # Name of an existing Secret holding the SQLAlchemy URL. The chart never creates it,
+  # so credentials stay out of values files and Helm release history.
+  existingSecret: ""
+  secretKey: database-url
+
+migrations:
+  # Runs `alembic upgrade head` as a pre-install/pre-upgrade hook Job.
+  enabled: true
+  backoffLimit: 1
+  activeDeadlineSeconds: 300
+
+service:
+  type: ClusterIP
+  port: 80
+
+containerPort: 8000
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+# Shutdown sequence: preStop sleep (endpoints are removed from load balancers), then
+# SIGTERM (uvicorn drains for up to shutdownTimeoutSeconds), then SIGKILL at the grace period.
+# Keep preStopSleepSeconds + shutdownTimeoutSeconds < terminationGracePeriodSeconds.
+terminationGracePeriodSeconds: 30
+preStopSleepSeconds: 5
+shutdownTimeoutSeconds: 20
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+metrics:
+  # Adds prometheus.io/* scrape annotations to pods.
+  scrapeAnnotations: true
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

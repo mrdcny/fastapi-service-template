@@ -1,0 +1,8 @@
+database:
+  existingSecret: fastapi-service-template-db
+autoscaling:
+  enabled: true
+config:
+  extraEnv:
+    - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      value: http://otel-collector:4318
