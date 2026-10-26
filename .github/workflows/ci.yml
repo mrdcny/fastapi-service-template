@@ -68,7 +68,7 @@ jobs:
           CHART=deploy/helm/fastapi-service-template
           helm lint --strict "$CHART" -f "$CHART/ci/test-values.yaml"
           helm template ci "$CHART" -f "$CHART/ci/test-values.yaml" > rendered.yaml
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: rendered-manifests
           path: rendered.yaml
