@@ -1,14 +1,29 @@
+# One grouped PR per ecosystem per week, instead of one PR per dependency.
 version: 2
 updates:
   - package-ecosystem: uv
     directory: /
     schedule: { interval: weekly }
     groups:
-      opentelemetry:
-        patterns: ["opentelemetry-*"]
+      python:
+        patterns: ["*"]
+    ignore:
+      # opentelemetry-instrumentation-sqlalchemy does not support 2.1 yet and silently
+      # stops tracing on it. Remove once it does (tests/test_telemetry.py checks this).
+      - dependency-name: sqlalchemy
+        versions: [">=2.1"]
+
   - package-ecosystem: docker
     directory: /
     schedule: { interval: weekly }
+    groups:
+      docker:
+        patterns: ["*"]
+
+  # Actions are pinned to commit SHAs; Dependabot updates the SHA and the version comment.
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: weekly }
+    groups:
+      actions:
+        patterns: ["*"]
