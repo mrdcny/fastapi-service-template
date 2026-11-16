@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # ---- build: resolve and install dependencies into a self-contained virtualenv ----
-FROM python:3.12-slim-trixie AS build
+FROM python:3.15-slim-trixie AS build
 COPY --from=ghcr.io/astral-sh/uv:0.13.5 /uv /bin/uv
 
 ENV UV_COMPILE_BYTECODE=1 \
@@ -22,7 +22,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --no-editable
 
 # ---- runtime: no compiler, no uv, no source tree, non-root ----
-FROM python:3.12-slim-trixie AS runtime
+FROM python:3.15-slim-trixie AS runtime
 
 RUN groupadd --system --gid 10001 app \
  && useradd --system --uid 10001 --gid app --no-create-home --shell /usr/sbin/nologin app
